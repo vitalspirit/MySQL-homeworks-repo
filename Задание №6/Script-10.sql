@@ -465,29 +465,25 @@ UPDATE posts SET media = NULL where media = 0;
 
 
 # Определяем количество лайков полученных 10-ю самыми молодыми пользователями
-SELECT SUM(q) as SUMMA from
- 	(SELECT COUNT(*) as q, profiles.user_id as a, posts.id as post_ID, likes.post_id as b
-	FROM profiles 
-	INNER JOIN posts ON profiles.user_id = posts.user_id
-	INNER JOIN likes on posts.id = likes.post_id
-	GROUP BY likes.post_id
-	ORDER BY profiles.birthday DESC LIMIT 10) as d
- 
+
+SELECT SUM(Number_of_likes) as SUM_of_LIKES from
+(SELECT  COUNT(*) as Number_of_likes, profiles.user_id, profiles.birthday
+FROM profiles 
+	JOIN posts ON profiles.user_id = posts.user_id
+	JOIN likes ON likes.post_id = posts.id
+GROUP BY profiles.user_id 
+ORDER BY profiles.birthday DESC LIMIT 10) as d
+
 
 # Определить кто больше поставил лайков (всего) - мужчины или женщины?
-SELECT COUNT(gender), gender from
-	(SELECT likes.id AS like_id, likes.user_like_id as user_liked, profiles.gender_id as gender
-	FROM likes
-	INNER JOIN profiles ON likes.user_like_id = profiles.user_id) as tbl 
-	GROUP BY gender
 	
-# Определить кто больше поставил лайков (всего) - мужчины или женщины?
-SELECT COUNT(*) AS Quantity, gender_info from
-	(SELECT likes.id AS like_id, likes.user_like_id as user_liked, profiles.gender_id as gender_id, gender.gender_info AS gender_info
-	FROM likes
-	INNER JOIN profiles ON likes.user_like_id = profiles.user_id
-	INNER JOIN gender ON profiles.gender_id = gender.id ) as tbl
-	GROUP BY gender_info
+SELECT COUNT(*) as Q, gender.gender_info
+FROM likes
+	INNER JOIN profiles ON profiles.user_id = likes.user_like_id
+	INNER JOIN gender ON gender.id = profiles.gender_id
+GROUP BY gender.gender_info
+ORDER BY Q DESC
+	
 	
 #Самостоятельно - Выбрать 3 поста набравших максимальное количество лайков
 SELECT COUNT(*) AS Quantity, ID_OF_POST FROM
